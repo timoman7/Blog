@@ -1,4 +1,3 @@
-(function(){
 var userDB = firebase.database().ref("users");
 var currentUser;
 setInterval(function(){
@@ -48,6 +47,7 @@ function signOut(){
 		alert("Somehow you screwed up logging out.");
 	});
 }
+(function(){
 if(currentUser){
   userDB.once('value').then(function(data){
     if(data.child(currentUser.uid).exists()){
