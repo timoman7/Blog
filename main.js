@@ -21,11 +21,20 @@ firebase.auth().getRedirectResult().then(function(result){
 	if(user === null){
 	}else{
 		currentUser = firebase.auth().currentUser;
-		if(userDB.child(currentUser.uid).exists()){
-			userDB.child(currentUser.uid).update({
-				online:true
-			});
-		}
+		userDB.once('value').then(function(data){
+			if(data.child(currentUser.uid).exists()){
+				userDB.child(currentUser.uid).update({
+					online: true
+				});
+			}else{
+				var userData = {
+					name: currentUser.displayName,
+					online: true,
+					ranking: 0
+				};
+				userDB.child(currentUser.uid).set(userData);
+			}
+		});
 		userDB.child(currentUser.uid).onDisconnect().update({
 			online: false
 		});
@@ -51,23 +60,5 @@ function signOut(){
 		alert("Somehow you screwed up logging out.");
 	});
 }
-(function(){
-	if(currentUser){
-	  userDB.once('value').then(function(data){
-	    if(data.child(currentUser.uid).exists()){
-	      userDB.child(currentUser.uid).update({
-		online: true
-	      });
-	    }else{
-	      var userData = {
-		name: currentUser.displayName,
-		online: true,
-		ranking: 0
-	      };
-	      userDB.child(currentUser.uid).set(userData);
-	    }
-	  });
-	}
-	$(".Login").on("click",signInWithGoogle);
-	$(".Logout").on("click",signOut);
-})();
+$(".Login").on("click",signInWithGoogle);
+$(".Logout").on("click",signOut);
