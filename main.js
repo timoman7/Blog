@@ -64,4 +64,6 @@ if(currentUser){
     }
   });
 }
+$(".Login").on("click",signInWithGoogle);
+$(".Logout").on("click",signOut);
 })();
